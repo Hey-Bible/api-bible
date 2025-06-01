@@ -1,7 +1,7 @@
 export class Observable<T> {
   constructor(private promise: Promise<T>) {}
 
-  toPromise() {
+  toPromise(): Promise<T> {
     return this.promise;
   }
 
