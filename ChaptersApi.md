@@ -1,141 +1,17 @@
 # .ChaptersApi
 
-All URIs are relative to *https://api.scripture.api.bible*
+All URIs are relative to *https://rest.api.bible/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**getAudioChapter**](ChaptersApi.md#getAudioChapter) | **GET** /v1/audio-bibles/{audioBibleId}/chapters/{chapterId} | 
-[**getAudioChapters**](ChaptersApi.md#getAudioChapters) | **GET** /v1/audio-bibles/{audioBibleId}/books/{bookId}/chapters | 
-[**getChapter**](ChaptersApi.md#getChapter) | **GET** /v1/bibles/{bibleId}/chapters/{chapterId} | 
-[**getChapters**](ChaptersApi.md#getChapters) | **GET** /v1/bibles/{bibleId}/books/{bookId}/chapters | 
+[**getChapter**](ChaptersApi.md#getChapter) | **GET** /bibles/{bibleId}/chapters/{chapterId} | Get a Chapter
+[**getChapters**](ChaptersApi.md#getChapters) | **GET** /bibles/{bibleId}/books/{bookId}/chapters | List Chapters in a Book
 
-
-# **getAudioChapter**
-> GetAudioChapter200Response getAudioChapter()
-
-Gets a single `Chapter` object for a given `audioBibleId` and `chapterId`. This AudioChapter object also includes an `resourceUrl` property with a HTTP URL to the mp3 audio resource for the chapter.  The `resourceUrl` is unique per request and expires in XX minutes.  The `expiresAt` property provides the Unix time value of `resourceUrl` expiration. 
-
-### Example
-
-
-```typescript
-import {  } from '';
-import * as fs from 'fs';
-
-const configuration = .createConfiguration();
-const apiInstance = new .ChaptersApi(configuration);
-
-let body:.ChaptersApiGetAudioChapterRequest = {
-  // string | Id of Bible whose Chapter to fetch
-  audioBibleId: "audioBibleId_example",
-  // string | Id of the Chapter to fetch
-  chapterId: "chapterId_example",
-};
-
-apiInstance.getAudioChapter(body).then((data:any) => {
-  console.log('API called successfully. Returned data: ' + data);
-}).catch((error:any) => console.error(error));
-```
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **audioBibleId** | [**string**] | Id of Bible whose Chapter to fetch | defaults to undefined
- **chapterId** | [**string**] | Id of the Chapter to fetch | defaults to undefined
-
-
-### Return type
-
-**GetAudioChapter200Response**
-
-### Authorization
-
-[ApiKeyAuth](README.md#ApiKeyAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: */*
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid ID supplied |  -  |
-**401** | Unauthorized for API access.  Missing or Invalid API Token provided. |  -  |
-**403** | Not authorized to retrieve Chapters for this Bible |  -  |
-**404** | Chapter not found |  -  |
-
-[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
-
-# **getAudioChapters**
-> GetChapters200Response getAudioChapters()
-
-Gets an array of `Chapter` objects for a given `audioBibleId` and `bookId` 
-
-### Example
-
-
-```typescript
-import {  } from '';
-import * as fs from 'fs';
-
-const configuration = .createConfiguration();
-const apiInstance = new .ChaptersApi(configuration);
-
-let body:.ChaptersApiGetAudioChaptersRequest = {
-  // string | Id of Bible whose Chapters to fetch
-  audioBibleId: "audioBibleId_example",
-  // string | Id of the Book whose Chapters to fetch
-  bookId: "bookId_example",
-};
-
-apiInstance.getAudioChapters(body).then((data:any) => {
-  console.log('API called successfully. Returned data: ' + data);
-}).catch((error:any) => console.error(error));
-```
-
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **audioBibleId** | [**string**] | Id of Bible whose Chapters to fetch | defaults to undefined
- **bookId** | [**string**] | Id of the Book whose Chapters to fetch | defaults to undefined
-
-
-### Return type
-
-**GetChapters200Response**
-
-### Authorization
-
-[ApiKeyAuth](README.md#ApiKeyAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: */*
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid ID supplied |  -  |
-**401** | Unauthorized for API access.  Missing or Invalid API Token provided. |  -  |
-**403** | Not authorized to retrieve Chapters for this Bible |  -  |
-**404** | Book not found |  -  |
-
-[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **getChapter**
 > GetChapter200Response getChapter()
 
-Gets a single `Chapter` object for a given `bibleId` and `chapterId`. This Chapter object also includes an `content` property with all verses for the Chapter. 
+Gets a single `Chapter` object for a given `bibleId` and `chapterId`.  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  In addition to information about the given chapter, this endpoint will also return all verse content included in that chapter within the `content` field.
 
 ### Example
 
@@ -148,24 +24,24 @@ const configuration = .createConfiguration();
 const apiInstance = new .ChaptersApi(configuration);
 
 let body:.ChaptersApiGetChapterRequest = {
-  // string | Id of Bible whose Chapter to fetch
-  bibleId: "bibleId_example",
-  // string | Id of the Chapter to fetch
-  chapterId: "chapterId_example",
-  // 'html' | 'json' | 'text' | Content type to be returned in the content property.  Supported values are `html` (default), `json` (beta), and `text` (beta) (optional)
+  // string | The ID of the Bible you are looking to fetch
+  bibleId: "65eec8e0b60e656b-01",
+  // string | The Chapter ID you are looking to fetch
+  chapterId: "GEN.1",
+  // 'html' | 'json' | 'text' | Determines the structure of returned verse content (optional)
   contentType: "html",
-  // boolean | Include footnotes in content (optional)
+  // boolean | When `true`, returns footnotes in verse content (optional)
   includeNotes: false,
-  // boolean | Include section titles in content (optional)
+  // boolean | When `true`, returns section titles in verse content (optional)
   includeTitles: true,
-  // boolean | Include chapter numbers in content (optional)
+  // boolean | When `true`, returns chapter numbers in verse content (optional)
   includeChapterNumbers: false,
-  // boolean | Include verse numbers in content. (optional)
+  // boolean | When `true`, returns verse numbers in verse content (optional)
   includeVerseNumbers: true,
-  // boolean | Include spans that wrap verse numbers and verse text for bible content. (optional)
+  // boolean | When `true`, returns spans that wrap verse numbers and verse text in content (optional)
   includeVerseSpans: false,
-  // string | Comma delimited list of bibleIds to include (optional)
-  parallels: "parallels_example",
+  // string | Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles (optional)
+  parallels: "78a9f6124f344018-01,a761ca71e0b3ddcf-01",
 };
 
 apiInstance.getChapter(body).then((data:any) => {
@@ -178,15 +54,15 @@ apiInstance.getChapter(body).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **bibleId** | [**string**] | Id of Bible whose Chapter to fetch | defaults to undefined
- **chapterId** | [**string**] | Id of the Chapter to fetch | defaults to undefined
- **contentType** | [**&#39;html&#39; | &#39;json&#39; | &#39;text&#39;**]**Array<&#39;html&#39; &#124; &#39;json&#39; &#124; &#39;text&#39;>** | Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta) | (optional) defaults to 'html'
- **includeNotes** | [**boolean**] | Include footnotes in content | (optional) defaults to false
- **includeTitles** | [**boolean**] | Include section titles in content | (optional) defaults to true
- **includeChapterNumbers** | [**boolean**] | Include chapter numbers in content | (optional) defaults to false
- **includeVerseNumbers** | [**boolean**] | Include verse numbers in content. | (optional) defaults to true
- **includeVerseSpans** | [**boolean**] | Include spans that wrap verse numbers and verse text for bible content. | (optional) defaults to false
- **parallels** | [**string**] | Comma delimited list of bibleIds to include | (optional) defaults to undefined
+ **bibleId** | [**string**] | The ID of the Bible you are looking to fetch | defaults to undefined
+ **chapterId** | [**string**] | The Chapter ID you are looking to fetch | defaults to undefined
+ **contentType** | [**&#39;html&#39; | &#39;json&#39; | &#39;text&#39;**]**Array<&#39;html&#39; &#124; &#39;json&#39; &#124; &#39;text&#39;>** | Determines the structure of returned verse content | (optional) defaults to 'html'
+ **includeNotes** | [**boolean**] | When &#x60;true&#x60;, returns footnotes in verse content | (optional) defaults to false
+ **includeTitles** | [**boolean**] | When &#x60;true&#x60;, returns section titles in verse content | (optional) defaults to true
+ **includeChapterNumbers** | [**boolean**] | When &#x60;true&#x60;, returns chapter numbers in verse content | (optional) defaults to false
+ **includeVerseNumbers** | [**boolean**] | When &#x60;true&#x60;, returns verse numbers in verse content | (optional) defaults to true
+ **includeVerseSpans** | [**boolean**] | When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content | (optional) defaults to false
+ **parallels** | [**string**] | Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles | (optional) defaults to undefined
 
 
 ### Return type
@@ -200,24 +76,24 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: */*
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid ID supplied |  -  |
-**401** | Unauthorized for API access.  Missing or Invalid API Token provided. |  -  |
-**403** | Not authorized to retrieve Chapters for this Bible |  -  |
-**404** | Chapter not found |  -  |
+**200** | ##### OK |  -  |
+**400** | #### Bad Request     Invalid Bible ID supplied |  -  |
+**401** | #### Unauthorized    Missing or Invalid API Token provided. |  -  |
+**403** | #### Forbidden    Not authorized to access this Bible |  -  |
+**404** | #### Not Found    Unable to find a chapter with the given &#x60;{chapterId}&#x60; |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 
 # **getChapters**
 > GetChapters200Response getChapters()
 
-Gets an array of `Chapter` objects for a given `bibleId` and `bookId` 
+Lists `Chapter` objects for a given `bibleId` and `bookId`  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](#/components/schemas/Book) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  *Note: This endpoint does not return verse content*
 
 ### Example
 
@@ -230,10 +106,10 @@ const configuration = .createConfiguration();
 const apiInstance = new .ChaptersApi(configuration);
 
 let body:.ChaptersApiGetChaptersRequest = {
-  // string | Id of Bible whose Chapters to fetch
-  bibleId: "bibleId_example",
-  // string | Id of the Book whose Chapters to fetch
-  bookId: "bookId_example",
+  // string | The ID of the Bible you are looking to fetch
+  bibleId: "65eec8e0b60e656b-01",
+  // string | The Book ID you are looking to fetch
+  bookId: "GEN",
 };
 
 apiInstance.getChapters(body).then((data:any) => {
@@ -246,8 +122,8 @@ apiInstance.getChapters(body).then((data:any) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **bibleId** | [**string**] | Id of Bible whose Chapters to fetch | defaults to undefined
- **bookId** | [**string**] | Id of the Book whose Chapters to fetch | defaults to undefined
+ **bibleId** | [**string**] | The ID of the Bible you are looking to fetch | defaults to undefined
+ **bookId** | [**string**] | The Book ID you are looking to fetch | defaults to undefined
 
 
 ### Return type
@@ -261,17 +137,17 @@ Name | Type | Description  | Notes
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: */*
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Successful response |  -  |
-**400** | Invalid ID supplied |  -  |
-**401** | Unauthorized for API access.  Missing or Invalid API Token provided. |  -  |
-**403** | Not authorized to retrieve Chapters for this Bible |  -  |
-**404** | Book not found |  -  |
+**200** | ##### OK |  -  |
+**400** | #### Bad Request     Invalid Bible ID supplied |  -  |
+**401** | #### Unauthorized    Missing or Invalid API Token provided. |  -  |
+**403** | #### Forbidden    Not authorized to access this Bible |  -  |
+**404** | #### Not Found    Unable to find a book with the given &#x60;{bookId}&#x60; |  -  |
 
 [[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
 

@@ -17,17 +17,18 @@ import { GetVerses200Response } from '../models/GetVerses200Response.ts';
 export class VersesApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Gets a `Verse` object for a given `bibleId` and `verseId`. This Verse object also includes an `content` property with the verse corresponding to the verseId. 
-     * @param bibleId Id of Bible for passage
-     * @param verseId String reference id for the requested verse.
-     * @param contentType Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
-     * @param includeNotes Include footnotes in content
-     * @param includeTitles Include section titles in content
-     * @param includeChapterNumbers Include chapter numbers in content
-     * @param includeVerseNumbers Include verse numbers in content.
-     * @param includeVerseSpans Include spans that wrap verse numbers and verse text for bible content.
-     * @param parallels Comma delimited list of bibleIds to include
-     * @param useOrgId Use the supplied id(s) to match the verseOrgId instead of the verseId
+     * Gets a `Verse` object for a given `bibleId` and `verseId`.  A `Verse` object represents a verse in the Bible. Each Verse is accessible via its **Verse ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID, a chapter number, and a verse number. A few examples are:  | Verse           | Verse ID   | | --------------- | ---------- | | Genesis 1:1     | `GEN.1.1`  | | John 3:16       | `JHN.3.16` | | Revelation 21.4 | `REV.21.4` |  In addition to information about the given verse, this endpoint will also return all verse content within the `content` field. 
+     * Get a Verse
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param verseId The Verse ID you are looking to fetch
+     * @param contentType Determines the structure of returned verse content
+     * @param includeNotes When &#x60;true&#x60;, returns footnotes in verse content
+     * @param includeTitles When &#x60;true&#x60;, returns section titles in verse content
+     * @param includeChapterNumbers When &#x60;true&#x60;, returns chapter numbers in verse content
+     * @param includeVerseNumbers When &#x60;true&#x60;, returns verse numbers in verse content
+     * @param includeVerseSpans When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
+     * @param parallels Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
+     * @param useOrgId When &#x60;true&#x60;, uses the supplied id(s) to match the &#x60;verseOrgId&#x60; instead of the &#x60;verseId&#x60;
      */
     public async getVerse(bibleId: string, verseId: string, contentType?: 'html' | 'json' | 'text', includeNotes?: boolean, includeTitles?: boolean, includeChapterNumbers?: boolean, includeVerseNumbers?: boolean, includeVerseSpans?: boolean, parallels?: string, useOrgId?: boolean, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -53,7 +54,7 @@ export class VersesApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/verses/{verseId}'
+        const localVarPath = '/bibles/{bibleId}/verses/{verseId}'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'verseId' + '}', encodeURIComponent(String(verseId)));
 
@@ -118,9 +119,10 @@ export class VersesApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Gets an array of `Verse` objects for a given `bibleId` and `chapterId` 
-     * @param bibleId Id of Bible whose Verses to fetch
-     * @param chapterId Id of the Chapter whose Verses to fetch
+     * Lists `Verse` objects for a given `bibleId` and `chapterId`  A `Verse` object represents a verse in the Bible. Each Verse is accessible via its **Verse ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID, a chapter number, and a verse number. A few examples are:  | Verse           | Verse ID   | | --------------- | ---------- | | Genesis 1:1     | `GEN.1.1`  | | John 3:16       | `JHN.3.16` | | Revelation 21.4 | `REV.21.4` |  *Note: This endpoint does not return verse content* 
+     * List Verses in a Chapter
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param chapterId The Chapter ID you are looking to fetch
      */
     public async getVerses(bibleId: string, chapterId: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -138,7 +140,7 @@ export class VersesApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/chapters/{chapterId}/verses'
+        const localVarPath = '/bibles/{bibleId}/chapters/{chapterId}/verses'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'chapterId' + '}', encodeURIComponent(String(chapterId)));
 
@@ -183,16 +185,16 @@ export class VersesApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Passage not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a passage with the given &#x60;{passageId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -224,16 +226,16 @@ export class VersesApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Book not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a book with the given &#x60;{bookId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

@@ -10,39 +10,24 @@
  * Do not edit the class manually.
  */
 
-import { Meta } from '../models/Meta.ts';
-import { SearchResponse } from '../models/SearchResponse.ts';
+import { Bible } from '../models/Bible.ts';
 import { HttpFile } from '../http/http.ts';
 
-export class SearchBible200Response {
-    'query'?: string;
-    'data': SearchResponse;
-    'meta': Meta;
+export class GetAudioBibles200Response {
+    'data': Array<Bible>;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "query",
-            "baseName": "query",
-            "type": "string",
-            "format": ""
-        },
-        {
             "name": "data",
             "baseName": "data",
-            "type": "SearchResponse",
-            "format": ""
-        },
-        {
-            "name": "meta",
-            "baseName": "meta",
-            "type": "Meta",
+            "type": "Array<Bible>",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return SearchBible200Response.attributeTypeMap;
+        return GetAudioBibles200Response.attributeTypeMap;
     }
 
     public constructor() {

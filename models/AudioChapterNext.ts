@@ -12,44 +12,47 @@
 
 import { HttpFile } from '../http/http.ts';
 
-export class AudioChapterTimecodesInner {
+/**
+* Information about the next **AudioChapter**, if one exists. Can be used to navigate the Bible one audio chapter at a time.
+*/
+export class AudioChapterNext {
     /**
-    * The timestamp when this verse ends
+    * The next audio chapter\'s `id`
     */
-    'end': string;
+    'id': string;
     /**
-    * The timestamp when this verse starts
+    * The next audio chapter\'s `bookId`
     */
-    'start': string;
+    'bookId': string;
     /**
-    * The **Verse ID** being read at this timestamp
+    * The next audio chapter\'s chapter `number`
     */
-    'verseId': string;
+    'number': string;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "end",
-            "baseName": "end",
+            "name": "id",
+            "baseName": "id",
             "type": "string",
             "format": ""
         },
         {
-            "name": "start",
-            "baseName": "start",
+            "name": "bookId",
+            "baseName": "bookId",
             "type": "string",
             "format": ""
         },
         {
-            "name": "verseId",
-            "baseName": "verseId",
+            "name": "number",
+            "baseName": "number",
             "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return AudioChapterTimecodesInner.attributeTypeMap;
+        return AudioChapterNext.attributeTypeMap;
     }
 
     public constructor() {

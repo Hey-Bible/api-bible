@@ -17,9 +17,10 @@ import { GetSection200Response } from '../models/GetSection200Response.ts';
 export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Gets an array of `Section` objects for a given `bibleId` and `bookId` 
-     * @param bibleId Id of Bible whose Sections to fetch
-     * @param bookId Id of the Book whose Sections to fetch
+     * Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  *Note: This endpoint does not return verse content* 
+     * List Sections in a Book
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param bookId The Book ID you are looking to fetch
      */
     public async getBookSections(bibleId: string, bookId: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -37,7 +38,7 @@ export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/books/{bookId}/sections'
+        const localVarPath = '/bibles/{bibleId}/books/{bookId}/sections'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'bookId' + '}', encodeURIComponent(String(bookId)));
 
@@ -62,9 +63,10 @@ export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Gets an array of `Section` objects for a given `bibleId` and `chapterId` 
-     * @param bibleId Id of Bible whose Sections to fetch
-     * @param chapterId Id of the Chapter whose Sections to fetch
+     * Lists `Section` objects for a given `bibleId` and `chapterId`  Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  *Note: This endpoint does not return verse content* 
+     * List Sections in a Chapter
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param chapterId The Chapter ID you are looking to fetch
      */
     public async getChapterSections(bibleId: string, chapterId: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -82,7 +84,7 @@ export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/chapters/{chapterId}/sections'
+        const localVarPath = '/bibles/{bibleId}/chapters/{chapterId}/sections'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'chapterId' + '}', encodeURIComponent(String(chapterId)));
 
@@ -107,16 +109,17 @@ export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Gets a single `Section` object for a given `bibleId` and `sectionId`. This Section object also includes an `content` property with all verses for the Section. 
-     * @param bibleId Id of Bible whose Section to fetch
-     * @param sectionId Id of the Section to fetch
-     * @param contentType Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
-     * @param includeNotes Include footnotes in content
-     * @param includeTitles Include section titles in content
-     * @param includeChapterNumbers Include chapter numbers in content
-     * @param includeVerseNumbers Include verse numbers in content.
-     * @param includeVerseSpans Include spans that wrap verse numbers and verse text for bible content.
-     * @param parallels Comma delimited list of bibleIds to include
+     * Gets a single `Section` object for a given `bibleId` and `sectionId`.   Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  In addition to information about the given section, this endpoint will also return all verse content included in that section within the `content` field. 
+     * Get a Section
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param sectionId The Section ID you are looking to fetch
+     * @param contentType Determines the structure of returned verse content
+     * @param includeNotes When &#x60;true&#x60;, returns footnotes in verse content
+     * @param includeTitles When &#x60;true&#x60;, returns section titles in verse content
+     * @param includeChapterNumbers When &#x60;true&#x60;, returns chapter numbers in verse content
+     * @param includeVerseNumbers When &#x60;true&#x60;, returns verse numbers in verse content
+     * @param includeVerseSpans When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
+     * @param parallels Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      */
     public async getSection(bibleId: string, sectionId: string, contentType?: 'html' | 'json' | 'text', includeNotes?: boolean, includeTitles?: boolean, includeChapterNumbers?: boolean, includeVerseNumbers?: boolean, includeVerseSpans?: boolean, parallels?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -141,7 +144,7 @@ export class SectionsApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/sections/{sectionId}'
+        const localVarPath = '/bibles/{bibleId}/sections/{sectionId}'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'sectionId' + '}', encodeURIComponent(String(sectionId)));
 
@@ -221,16 +224,16 @@ export class SectionsApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Book not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a book with the given &#x60;{bookId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -262,16 +265,16 @@ export class SectionsApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Book not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a book with the given &#x60;{bookId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -303,16 +306,16 @@ export class SectionsApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Section not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a section with the given &#x60;{sectionId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
