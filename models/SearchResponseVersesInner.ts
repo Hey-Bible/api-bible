@@ -10,14 +10,9 @@
  * Do not edit the class manually.
  */
 
-import { VerseNext } from '../models/VerseNext.ts';
-import { VersePrevious } from '../models/VersePrevious.ts';
 import { HttpFile } from '../http/http.ts';
 
-/**
-* A **Verse** object represents a single verse in the Bible, including verse content.
-*/
-export class Verse {
+export class SearchResponseVersesInner {
     /**
     * A string consisting of a [Book](https://docs.api.bible/guides/books) ID, a chapter number, and a verse number. A few examples are:    | Verse           | Verse ID   |  | --------------- | ---------- |  | Genesis 1:1     | `GEN.1.1`  |  | John 3:16       | `JHN.3.16` |  | Revelation 21.4 | `REV.21.4` |
     */
@@ -43,19 +38,9 @@ export class Verse {
     */
     'reference': string;
     /**
-    * Verse content. Can be formatted as `html`, `json`, or `text`.
+    * Verse content, formatted as `text`. Additional information about this verse can be fetched by making a request to `/bibles/{bibleId}/verses/{verseId}`
     */
-    'content': string;
-    /**
-    * The number of verses returned, should be `1`
-    */
-    'verseCount': number;
-    /**
-    * Copyright info for this verse
-    */
-    'copyright': string;
-    'next'?: VerseNext;
-    'previous'?: VersePrevious;
+    'text': string;
 
     static readonly discriminator: string | undefined = undefined;
 
@@ -97,38 +82,14 @@ export class Verse {
             "format": ""
         },
         {
-            "name": "content",
-            "baseName": "content",
+            "name": "text",
+            "baseName": "text",
             "type": "string",
-            "format": ""
-        },
-        {
-            "name": "verseCount",
-            "baseName": "verseCount",
-            "type": "number",
-            "format": ""
-        },
-        {
-            "name": "copyright",
-            "baseName": "copyright",
-            "type": "string",
-            "format": ""
-        },
-        {
-            "name": "next",
-            "baseName": "next",
-            "type": "VerseNext",
-            "format": ""
-        },
-        {
-            "name": "previous",
-            "baseName": "previous",
-            "type": "VersePrevious",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return Verse.attributeTypeMap;
+        return SearchResponseVersesInner.attributeTypeMap;
     }
 
     public constructor() {

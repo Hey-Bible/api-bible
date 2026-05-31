@@ -16,17 +16,18 @@ import { GetPassage200Response } from '../models/GetPassage200Response.ts';
 export class PassagesApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Gets a `Passage` object for a given `bibleId` and `passageId`. This Passage object also includes an `content` property with all verses corresponding to the passageId. The `passageId` parameter can represent a chapter, verse, or range of verses. 
-     * @param bibleId Id of Bible for passage
-     * @param passageId String reference id for the requested passage.
-     * @param contentType Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
-     * @param includeNotes Include footnotes in content
-     * @param includeTitles Include section titles in content
-     * @param includeChapterNumbers Include chapter numbers in content
-     * @param includeVerseNumbers Include verse numbers in content.
-     * @param includeVerseSpans Include spans that wrap verse numbers and verse text for bible content.
-     * @param parallels Comma delimited list of bibleIds to include
-     * @param useOrgId Use the supplied id(s) to match the verseOrgId instead of the verseId
+     * Gets a `Passage` object for a given `bibleId` and `passageId`.  A `Passage` object represents an arbitrary range of verses from the Bible. These ranges are not predefined values, but instead depend on the given input, known as a **Passage ID**. A **Passsage ID** consists of two [Verse](https://docs.api.bible/guides/verses) IDs separated by a `-`. These **Verse IDs** can span chapters and books, though passages are limited to 200 verses. A few passage examples are:  | Verse Range                             | Passage ID          | | --------------------------------------- | ------------------- | | Genesis 1:1 - Genesis 2:3               | `GEN.1.1-GEN.2.3`   | | John 3:1 - John 3:16                    | `JHN.3:1-JHN.3.16`  | | 1 Corinthians 16:1 - 2 Corinthians 1:23 | `1CO.16.1-2CO.1.23` |  In addition to information about the given passage, this endpoint will also return all verse content included in that passage within the `content` field. 
+     * Get a Passage
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param passageId The Passage ID you are looking to fetch
+     * @param contentType Determines the structure of returned verse content
+     * @param includeNotes When &#x60;true&#x60;, returns footnotes in verse content
+     * @param includeTitles When &#x60;true&#x60;, returns section titles in verse content
+     * @param includeChapterNumbers When &#x60;true&#x60;, returns chapter numbers in verse content
+     * @param includeVerseNumbers When &#x60;true&#x60;, returns verse numbers in verse content
+     * @param includeVerseSpans When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
+     * @param parallels Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
+     * @param useOrgId When &#x60;true&#x60;, uses the supplied id(s) to match the &#x60;verseOrgId&#x60; instead of the &#x60;verseId&#x60;
      */
     public async getPassage(bibleId: string, passageId: string, contentType?: 'html' | 'json' | 'text', includeNotes?: boolean, includeTitles?: boolean, includeChapterNumbers?: boolean, includeVerseNumbers?: boolean, includeVerseSpans?: boolean, parallels?: string, useOrgId?: boolean, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -52,7 +53,7 @@ export class PassagesApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/passages/{passageId}'
+        const localVarPath = '/bibles/{bibleId}/passages/{passageId}'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'passageId' + '}', encodeURIComponent(String(passageId)));
 
@@ -137,16 +138,16 @@ export class PassagesApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Passage not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a passage with the given &#x60;{passageId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

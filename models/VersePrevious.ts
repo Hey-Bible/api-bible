@@ -12,44 +12,37 @@
 
 import { HttpFile } from '../http/http.ts';
 
-export class AudioChapterTimecodesInner {
+/**
+* Information about the previous **Chapter**, if one exists. Can be used to navigate the Bible backwards one chapter at a time.
+*/
+export class VersePrevious {
     /**
-    * The timestamp when this verse ends
+    * The next verse\'s `id`
     */
-    'end': string;
+    'id': string;
     /**
-    * The timestamp when this verse starts
+    * The previous verse\'s `bookId`
     */
-    'start': string;
-    /**
-    * The **Verse ID** being read at this timestamp
-    */
-    'verseId': string;
+    'bookId': string;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "end",
-            "baseName": "end",
+            "name": "id",
+            "baseName": "id",
             "type": "string",
             "format": ""
         },
         {
-            "name": "start",
-            "baseName": "start",
-            "type": "string",
-            "format": ""
-        },
-        {
-            "name": "verseId",
-            "baseName": "verseId",
+            "name": "bookId",
+            "baseName": "bookId",
             "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return AudioChapterTimecodesInner.attributeTypeMap;
+        return VersePrevious.attributeTypeMap;
     }
 
     public constructor() {

@@ -12,44 +12,35 @@
 
 import { HttpFile } from '../http/http.ts';
 
-export class AudioChapterTimecodesInner {
-    /**
-    * The timestamp when this verse ends
-    */
-    'end': string;
-    /**
-    * The timestamp when this verse starts
-    */
-    'start': string;
-    /**
-    * The **Verse ID** being read at this timestamp
-    */
-    'verseId': string;
+export class BibleCountriesInner {
+    'id': string;
+    'name': string;
+    'nameLocal': string;
 
     static readonly discriminator: string | undefined = undefined;
 
     static readonly attributeTypeMap: Array<{name: string, baseName: string, type: string, format: string}> = [
         {
-            "name": "end",
-            "baseName": "end",
+            "name": "id",
+            "baseName": "id",
             "type": "string",
             "format": ""
         },
         {
-            "name": "start",
-            "baseName": "start",
+            "name": "name",
+            "baseName": "name",
             "type": "string",
             "format": ""
         },
         {
-            "name": "verseId",
-            "baseName": "verseId",
+            "name": "nameLocal",
+            "baseName": "nameLocal",
             "type": "string",
             "format": ""
         }    ];
 
     static getAttributeTypeMap() {
-        return AudioChapterTimecodesInner.attributeTypeMap;
+        return BibleCountriesInner.attributeTypeMap;
     }
 
     public constructor() {

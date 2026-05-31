@@ -16,13 +16,14 @@ import { SearchBible200Response } from '../models/SearchBible200Response.ts';
 export class SearchApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Gets search results for a given `bibleId` and query string.  Searches will match all verses with the list of keywords provided in the query string. Order of the keywords does not matter. However all keywords must be present in a verse for it to be considered a match. The total number of results returned from a search can be limited by populating the `limit` attribute in the query string with a non-negative integer value.  If no limit value is provide a default of 10 is used. `offset` can be used to traverse paginated results.  So for example if you are using the default `limit` of 10, using an `offset` of 10 will return the second page of results, namely results 11-20. The `text` property of each verse object contains only the verse text.  It does not contain footnote references. However, those can be queried directly using the `/bibles/{bibleId}/verses/{verseId}` endpoint. 
-     * @param bibleId Id of Bible to search
-     * @param query Search keywords or passage reference.  Supported wildcards are * and ?.   The * wildcard matches any character sequence (e.g. searching for \&quot;wo*d\&quot; finds text such as \&quot;word\&quot;, \&quot;world\&quot;, and \&quot;worshipped\&quot;).   The ? wildcard matches any matches any single character (e.g. searching for \&quot;l?ve\&quot; finds text such as \&quot;live\&quot; and \&quot;love\&quot;). 
-     * @param limit Integer limit for how many matching results to return. Default is 10.
-     * @param offset Offset for search results. Used to paginate results
-     * @param sort Sort order of results.  Supported values are &#x60;relevance&#x60; (default), &#x60;canonical&#x60; and &#x60;reverse-canonical&#x60;
-     * @param range One or more, comma seperated, passage ids (book, chapter, verse) which the search will be limited to.  (i.e. gen.1,gen.5 or gen-num or gen.1.1-gen.3.5) 
+     * A search will attempt to match all verses with the list of keywords provided in the query string. The order of the keywords does not matter, however _all listed keywords must be present in a verse for it to be considered a match_.  Wildcard searches are supported, and can be used to match partial results:  | Wildcard | Description                    | Example                                                      | | -------- | ------------------------------ | ------------------------------------------------------------ | | `*`      | Matches any character sequence | \"wo\\*d\" finds text such as \"word\", \"world\", and \"worshipped\" | | `?`      | Matches any single character   | \"l?ve\" finds text such as \"live\" and \"love\"                  |  The `text` property of each search result contains only the verse text, it does not contain footnote references or additional formatting. However, more information on a verse can be queried directly by [fetching a single verse](https://docs.api.bible/guides/verses#fetching-a-single-verse). 
+     * Search a Bible
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param query Comma-separated search keywords or a passage reference. Supported wildcards are &#x60;*&#x60; and &#x60;?&#x60;. The &#x60;*&#x60; wildcard matches any character sequence (e.g. searching for \&quot;wo*d\&quot; finds text such as \&quot;word\&quot;, \&quot;world\&quot;, and \&quot;worshipped\&quot;). The &#x60;?&#x60; wildcard matches any matches any single character (e.g. searching for \&quot;l?ve\&quot; finds text such as \&quot;live\&quot; and \&quot;love\&quot;).
+     * @param limit Limits the number of search results returned. Used with the &#x60;offset&#x60; parameter to paginate results.
+     * @param offset Offsets results by the given amount. Used with the &#x60;limit&#x60; parameter to paginate results.
+     * @param sort Sorts search results
+     * @param range Comma-separated list of Passage IDs which the search will be limited to. 
      * @param fuzziness Sets the fuzziness of a search to account for misspellings. Values can be 0, 1, 2, or AUTO. Defaults to AUTO which varies depending on the 
      */
     public async searchBible(bibleId: string, query?: string, limit?: number, offset?: number, sort?: 'relevance' | 'canonical' | 'reverse-canonical', range?: string, fuzziness?: 'AUTO' | '0' | '1' | '2', _options?: Configuration): Promise<RequestContext> {
@@ -41,7 +42,7 @@ export class SearchApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/search'
+        const localVarPath = '/bibles/{bibleId}/search'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)));
 
         // Make Request Context
@@ -115,16 +116,16 @@ export class SearchApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Sections for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Section not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a section with the given &#x60;{sectionId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml

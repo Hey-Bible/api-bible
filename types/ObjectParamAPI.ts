@@ -1,18 +1,20 @@
 import { ResponseContext, RequestContext, HttpFile } from '../http/http.ts';
 import { Configuration} from '../configuration.ts'
 
-import { AudioBible } from '../models/AudioBible.ts';
 import { AudioBibleSummary } from '../models/AudioBibleSummary.ts';
 import { AudioChapter } from '../models/AudioChapter.ts';
+import { AudioChapterNext } from '../models/AudioChapterNext.ts';
+import { AudioChapterPrevious } from '../models/AudioChapterPrevious.ts';
 import { AudioChapterTimecodesInner } from '../models/AudioChapterTimecodesInner.ts';
 import { Bible } from '../models/Bible.ts';
-import { BibleSummary } from '../models/BibleSummary.ts';
-import { BibleSummaryCountriesInner } from '../models/BibleSummaryCountriesInner.ts';
+import { BibleCountriesInner } from '../models/BibleCountriesInner.ts';
 import { Book } from '../models/Book.ts';
 import { Chapter } from '../models/Chapter.ts';
 import { ChapterNext } from '../models/ChapterNext.ts';
+import { ChapterPrevious } from '../models/ChapterPrevious.ts';
 import { ChapterSummary } from '../models/ChapterSummary.ts';
 import { GetAudioBible200Response } from '../models/GetAudioBible200Response.ts';
+import { GetAudioBibles200Response } from '../models/GetAudioBibles200Response.ts';
 import { GetAudioChapter200Response } from '../models/GetAudioChapter200Response.ts';
 import { GetBible200Response } from '../models/GetBible200Response.ts';
 import { GetBibles200Response } from '../models/GetBibles200Response.ts';
@@ -30,68 +32,208 @@ import { Meta } from '../models/Meta.ts';
 import { Passage } from '../models/Passage.ts';
 import { SearchBible200Response } from '../models/SearchBible200Response.ts';
 import { SearchResponse } from '../models/SearchResponse.ts';
-import { SearchVerse } from '../models/SearchVerse.ts';
+import { SearchResponseVersesInner } from '../models/SearchResponseVersesInner.ts';
 import { Section } from '../models/Section.ts';
 import { SectionNext } from '../models/SectionNext.ts';
+import { SectionPrevious } from '../models/SectionPrevious.ts';
 import { SectionSummary } from '../models/SectionSummary.ts';
 import { Verse } from '../models/Verse.ts';
 import { VerseNext } from '../models/VerseNext.ts';
+import { VersePrevious } from '../models/VersePrevious.ts';
 import { VerseSummary } from '../models/VerseSummary.ts';
 
-import { ObservableBiblesApi } from "./ObservableAPI.ts";
-import { BiblesApiRequestFactory, BiblesApiResponseProcessor} from "../apis/BiblesApi.ts";
+import { ObservableAudioBiblesApi } from "./ObservableAPI.ts";
+import { AudioBiblesApiRequestFactory, AudioBiblesApiResponseProcessor} from "../apis/AudioBiblesApi.ts";
 
-export interface BiblesApiGetAudioBibleRequest {
+export interface AudioBiblesApiGetAudioBibleRequest {
     /**
-     * Id of audio Bible to be fetched
+     * The ID of the Bible you are looking to fetch
      * @type string
-     * @memberof BiblesApigetAudioBible
+     * @memberof AudioBiblesApigetAudioBible
      */
-    audioBibleId: string
+    bibleId: string
 }
 
-export interface BiblesApiGetAudioBiblesRequest {
+export interface AudioBiblesApiGetAudioBiblesRequest {
     /**
      * ISO 639-3 three digit language code used to filter results
      * @type string
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     language?: string
     /**
      * Bible abbreviation to search for
      * @type string
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     abbreviation?: string
     /**
      * Bible name to search for
      * @type string
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     name?: string
     /**
      * Comma separated list of Bible Ids to return
      * @type string
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     ids?: string
     /**
-     * bibleId of related text Bible used to filter audio bible results
+     * &#x60;bibleId&#x60; of related text Bible used to filter audio Bible results
      * @type string
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     bibleId?: string
     /**
-     * Boolean to include full Bible details (e.g. copyright and promo info)
+     * When &#x60;true&#x60;, the returned Bibles will include additional Bible details (e.g. copyright and promo info)
      * @type boolean
-     * @memberof BiblesApigetAudioBibles
+     * @memberof AudioBiblesApigetAudioBibles
      */
     includeFullDetails?: boolean
 }
 
+export interface AudioBiblesApiGetAudioBookRequest {
+    /**
+     * The ID of the Bible you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioBook
+     */
+    bibleId: string
+    /**
+     * The Book ID you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioBook
+     */
+    bookId: string
+    /**
+     * When &#x60;true&#x60;, returns available chapter information for each book
+     * @type boolean
+     * @memberof AudioBiblesApigetAudioBook
+     */
+    includeChapters?: boolean
+}
+
+export interface AudioBiblesApiGetAudioBooksRequest {
+    /**
+     * The ID of the Bible you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioBooks
+     */
+    bibleId: string
+    /**
+     * When &#x60;true&#x60;, returns available chapter information for each book
+     * @type boolean
+     * @memberof AudioBiblesApigetAudioBooks
+     */
+    includeChapters?: boolean
+    /**
+     * When &#x60;true&#x60;, returns available chapter and section (if available) information for each book
+     * @type boolean
+     * @memberof AudioBiblesApigetAudioBooks
+     */
+    includeChaptersAndSections?: boolean
+}
+
+export interface AudioBiblesApiGetAudioChapterRequest {
+    /**
+     * The ID of the Bible you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioChapter
+     */
+    bibleId: string
+    /**
+     * The Chapter ID you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioChapter
+     */
+    chapterId: string
+}
+
+export interface AudioBiblesApiGetAudioChaptersRequest {
+    /**
+     * The ID of the Bible you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioChapters
+     */
+    bibleId: string
+    /**
+     * The Book ID you are looking to fetch
+     * @type string
+     * @memberof AudioBiblesApigetAudioChapters
+     */
+    bookId: string
+}
+
+export class ObjectAudioBiblesApi {
+    private api: ObservableAudioBiblesApi
+
+    public constructor(configuration: Configuration, requestFactory?: AudioBiblesApiRequestFactory, responseProcessor?: AudioBiblesApiResponseProcessor) {
+        this.api = new ObservableAudioBiblesApi(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Gets a single `AudioBible` for a given `bibleId`  An `AudioBible` object represents a single auditory translation (NIV, ESV, etc.) of the Bible. Each Bible is accessible via its **Bible ID**, a string consisting of a 16-digit unique string followed by a _publication number_ (`-01`, `-02`). A few popular examples are:  | Bible                                  | Bible ID              | | -------------------------------------- | --------------------- | | New International Version (**NIV**)    | `78a9f6124f344018-01` | | New American Standard Bible (**NASB**) | `a761ca71e0b3ddcf-01` | | Christian Standard Bible (**CSB**)     | `a556c5305ee15c3f-01` |
+     * Get an Audio Bible
+     * @param param the request object
+     */
+    public getAudioBible(param: AudioBiblesApiGetAudioBibleRequest, options?: Configuration): Promise<GetAudioBible200Response> {
+        return this.api.getAudioBible(param.bibleId,  options).toPromise();
+    }
+
+    /**
+     * Lists `AudioBible` objects authorized for current API Key.  **Audio Bibles** are nearly identical to [Bibles](https://docs.api.bible/guides/bibles), including their content structure. Audio Bibles, however, have one audio file for each chapter and therefore cannot be queried at the verse level. This is why Audio Bibles are queried separately from normal Bibles.  Audio Bible availability via API.Bible requires special licensing. For more information, please reach out to [support@api.bible](mailto:support@api.bible). 
+     * List Available Audio Bibles
+     * @param param the request object
+     */
+    public getAudioBibles(param: AudioBiblesApiGetAudioBiblesRequest = {}, options?: Configuration): Promise<GetAudioBibles200Response> {
+        return this.api.getAudioBibles(param.language, param.abbreviation, param.name, param.ids, param.bibleId, param.includeFullDetails,  options).toPromise();
+    }
+
+    /**
+     * Gets a single `Book` object for a given `bibleId` and `bookId`  A `Book` object represents a single book (Matthew, Mark, etc.) of a single Bible. Each `Book` is accessible via a **Book ID**, a 3-digit code representing the book\'s name. A few examples are:  | Book Name | Book ID | | --------- | ------- | | Genesis   | `GEN`   | | Mark      | `MRK`   | | 1 John    | `1JN`   | 
+     * Get an Audio Book
+     * @param param the request object
+     */
+    public getAudioBook(param: AudioBiblesApiGetAudioBookRequest, options?: Configuration): Promise<GetBook200Response> {
+        return this.api.getAudioBook(param.bibleId, param.bookId, param.includeChapters,  options).toPromise();
+    }
+
+    /**
+     * Lists `Book` objects for a given `bibleId`  A `Book` object represents a single book (Matthew, Mark, etc.) of a single Bible. Each `Book` is accessible via a **Book ID**, a 3-digit code representing the book\'s name. A few examples are:  | Book Name | Book ID | | --------- | ------- | | Genesis   | `GEN`   | | Mark      | `MRK`   | | 1 John    | `1JN`   |
+     * List Books in an Audio Bible
+     * @param param the request object
+     */
+    public getAudioBooks(param: AudioBiblesApiGetAudioBooksRequest, options?: Configuration): Promise<GetBooks200Response> {
+        return this.api.getAudioBooks(param.bibleId, param.includeChapters, param.includeChaptersAndSections,  options).toPromise();
+    }
+
+    /**
+     * Gets a single `AudioChapter` object for a given `bible` and `chapterId`.  A presigned link to the mp3 audio file for this audio chapter will be included in the `resourceUrl` field. This link is unique to your request and will will expire, so it is recommended to download that audio file using that link as quickly as you are able. It is **not** recommended that you stream audio directly from the provided link, as you will run into a number of ongoing issues.  Some audio chapters will include `timecodes`. These allow you to match verses in a chapter to a specific time code in the audio file. This can be helpful if you are using both text and audio Bibles and would like to highlight the verse as it is being read.
+     * Get an Audio Chapter
+     * @param param the request object
+     */
+    public getAudioChapter(param: AudioBiblesApiGetAudioChapterRequest, options?: Configuration): Promise<GetAudioChapter200Response> {
+        return this.api.getAudioChapter(param.bibleId, param.chapterId,  options).toPromise();
+    }
+
+    /**
+     * Lists `Chapter` objects for a given `bibleId` and `bookId`  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  *Note: This endpoint does not return verse content* 
+     * List Audio Chapters in an Audio Book
+     * @param param the request object
+     */
+    public getAudioChapters(param: AudioBiblesApiGetAudioChaptersRequest, options?: Configuration): Promise<GetChapters200Response> {
+        return this.api.getAudioChapters(param.bibleId, param.bookId,  options).toPromise();
+    }
+
+}
+
+import { ObservableBiblesApi } from "./ObservableAPI.ts";
+import { BiblesApiRequestFactory, BiblesApiResponseProcessor} from "../apis/BiblesApi.ts";
+
 export interface BiblesApiGetBibleRequest {
     /**
-     * Id of Bible to be fetched
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof BiblesApigetBible
      */
@@ -124,7 +266,7 @@ export interface BiblesApiGetBiblesRequest {
      */
     ids?: string
     /**
-     * Boolean to include full Bible details (e.g. copyright and promo info)
+     * When &#x60;true&#x60;, the returned Bibles will include additional Bible details (e.g. copyright and promo info)
      * @type boolean
      * @memberof BiblesApigetBibles
      */
@@ -139,23 +281,8 @@ export class ObjectBiblesApi {
     }
 
     /**
-     * Gets a single audio `Bible` for a given `audioBibleId` 
-     * @param param the request object
-     */
-    public getAudioBible(param: BiblesApiGetAudioBibleRequest, options?: Configuration): Promise<GetAudioBible200Response> {
-        return this.api.getAudioBible(param.audioBibleId,  options).toPromise();
-    }
-
-    /**
-     * Gets an array of audio `Bible` objects authorized for current API Key 
-     * @param param the request object
-     */
-    public getAudioBibles(param: BiblesApiGetAudioBiblesRequest = {}, options?: Configuration): Promise<GetBibles200Response> {
-        return this.api.getAudioBibles(param.language, param.abbreviation, param.name, param.ids, param.bibleId, param.includeFullDetails,  options).toPromise();
-    }
-
-    /**
-     * Gets a single `Bible` for a given `bibleId` 
+     * Gets a single `Bible` object using the given `bibleId`.   A `Bible` object represents a single translation (NIV, ESV, etc.) of the Bible. Each Bible is accessible via its **Bible ID**, a string consisting of a 16-digit unique string followed by a _publication number_ (`-01`, `-02`). A few popular examples are:  | Bible                                  | Bible ID              | | -------------------------------------- | --------------------- | | New International Version (**NIV**)    | `78a9f6124f344018-01` | | New American Standard Bible (**NASB**) | `a761ca71e0b3ddcf-01` | | Christian Standard Bible (**CSB**)     | `a556c5305ee15c3f-01` |
+     * Get a Bible
      * @param param the request object
      */
     public getBible(param: BiblesApiGetBibleRequest, options?: Configuration): Promise<GetBible200Response> {
@@ -163,7 +290,8 @@ export class ObjectBiblesApi {
     }
 
     /**
-     * Gets an array of `Bible` objects authorized for current API Key 
+     * Lists `Bible` objects authorized for the current API Key. This includes Creative Commons and Public Domain Bibles, as well as any Bibles licensed via a **Starter** or **Pro Plan**.  A `Bible` object represents a single translation (NIV, ESV, etc.) of the Bible. Each Bible is accessible via its **Bible ID**, a string consisting of a 16-digit unique string followed by a _publication number_ (`-01`, `-02`). A few popular examples are:  | Bible                                  | Bible ID              | | -------------------------------------- | --------------------- | | New International Version (**NIV**)    | `78a9f6124f344018-01` | | New American Standard Bible (**NASB**) | `a761ca71e0b3ddcf-01` | | Christian Standard Bible (**CSB**)     | `a556c5305ee15c3f-01` |
+     * List Available Bibles
      * @param param the request object
      */
     public getBibles(param: BiblesApiGetBiblesRequest = {}, options?: Configuration): Promise<GetBibles200Response> {
@@ -175,63 +303,21 @@ export class ObjectBiblesApi {
 import { ObservableBooksApi } from "./ObservableAPI.ts";
 import { BooksApiRequestFactory, BooksApiResponseProcessor} from "../apis/BooksApi.ts";
 
-export interface BooksApiGetAudioBookRequest {
-    /**
-     * Id of audio Bible whose Book to fetch
-     * @type string
-     * @memberof BooksApigetAudioBook
-     */
-    audioBibleId: string
-    /**
-     * Id of the Book to fetch
-     * @type string
-     * @memberof BooksApigetAudioBook
-     */
-    bookId: string
-    /**
-     * Boolean indicating if an array of chapter summaries should be included in the results. Defaults to false. 
-     * @type boolean
-     * @memberof BooksApigetAudioBook
-     */
-    includeChapters?: boolean
-}
-
-export interface BooksApiGetAudioBooksRequest {
-    /**
-     * Id of audio Bible whose Book to fetch
-     * @type string
-     * @memberof BooksApigetAudioBooks
-     */
-    audioBibleId: string
-    /**
-     * Boolean indicating if an array of chapter summaries should be included in the results. Defaults to false. 
-     * @type boolean
-     * @memberof BooksApigetAudioBooks
-     */
-    includeChapters?: boolean
-    /**
-     * Boolean indicating if an array of chapter summaries and an array of sections should be included in the results. Defaults to false. 
-     * @type boolean
-     * @memberof BooksApigetAudioBooks
-     */
-    includeChaptersAndSections?: boolean
-}
-
 export interface BooksApiGetBookRequest {
     /**
-     * Id of Bible whose Book to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof BooksApigetBook
      */
     bibleId: string
     /**
-     * Id of the Book to fetch
+     * The Book ID you are looking to fetch
      * @type string
      * @memberof BooksApigetBook
      */
     bookId: string
     /**
-     * Boolean indicating if an array of chapter summaries should be included in the results. Defaults to false. 
+     * When &#x60;true&#x60;, returns available chapter information for each book
      * @type boolean
      * @memberof BooksApigetBook
      */
@@ -240,19 +326,19 @@ export interface BooksApiGetBookRequest {
 
 export interface BooksApiGetBooksRequest {
     /**
-     * Id of Bible whose Book to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof BooksApigetBooks
      */
     bibleId: string
     /**
-     * Boolean indicating if an array of chapter summaries should be included in the results. Defaults to false. 
+     * When &#x60;true&#x60;, returns available chapter information for each book
      * @type boolean
      * @memberof BooksApigetBooks
      */
     includeChapters?: boolean
     /**
-     * Boolean indicating if an array of chapter summaries and an array of sections should be included in the results. Defaults to false. 
+     * When &#x60;true&#x60;, returns available chapter and section (if available) information for each book
      * @type boolean
      * @memberof BooksApigetBooks
      */
@@ -267,23 +353,8 @@ export class ObjectBooksApi {
     }
 
     /**
-     * Gets a single `Book` object for a given `audioBibleId` and `bookId` 
-     * @param param the request object
-     */
-    public getAudioBook(param: BooksApiGetAudioBookRequest, options?: Configuration): Promise<GetBook200Response> {
-        return this.api.getAudioBook(param.audioBibleId, param.bookId, param.includeChapters,  options).toPromise();
-    }
-
-    /**
-     * Gets an array of `Book` objects for a given `audioBibleId` 
-     * @param param the request object
-     */
-    public getAudioBooks(param: BooksApiGetAudioBooksRequest, options?: Configuration): Promise<GetBooks200Response> {
-        return this.api.getAudioBooks(param.audioBibleId, param.includeChapters, param.includeChaptersAndSections,  options).toPromise();
-    }
-
-    /**
-     * Gets a single `Book` object for a given `bibleId` and `bookId` 
+     * Gets a single `Book` object for a given `bibleId` and `bookId`.   A `Book` object represents a single book (Matthew, Mark, etc.) of a single Bible. Each `Book` is accessible via a **Book ID**, a 3-digit code representing the book\'s name. A few examples are:  | Book Name | Book ID | | --------- | ------- | | Genesis   | `GEN`   | | Mark      | `MRK`   | | 1 John    | `1JN`   |
+     * Get a Book
      * @param param the request object
      */
     public getBook(param: BooksApiGetBookRequest, options?: Configuration): Promise<GetBook200Response> {
@@ -291,7 +362,8 @@ export class ObjectBooksApi {
     }
 
     /**
-     * Gets an array of `Book` objects for a given `bibleId` 
+     * Lists `Book` objects for a given `bibleId`  A `Book` object represents a single book (Matthew, Mark, etc.) of a single Bible. Each `Book` is accessible via a **Book ID**, a 3-digit code representing the book\'s name. A few examples are:  | Book Name | Book ID | | --------- | ------- | | Genesis   | `GEN`   | | Mark      | `MRK`   | | 1 John    | `1JN`   |
+     * List Books in a Bible
      * @param param the request object
      */
     public getBooks(param: BooksApiGetBooksRequest, options?: Configuration): Promise<GetBooks200Response> {
@@ -303,87 +375,57 @@ export class ObjectBooksApi {
 import { ObservableChaptersApi } from "./ObservableAPI.ts";
 import { ChaptersApiRequestFactory, ChaptersApiResponseProcessor} from "../apis/ChaptersApi.ts";
 
-export interface ChaptersApiGetAudioChapterRequest {
-    /**
-     * Id of Bible whose Chapter to fetch
-     * @type string
-     * @memberof ChaptersApigetAudioChapter
-     */
-    audioBibleId: string
-    /**
-     * Id of the Chapter to fetch
-     * @type string
-     * @memberof ChaptersApigetAudioChapter
-     */
-    chapterId: string
-}
-
-export interface ChaptersApiGetAudioChaptersRequest {
-    /**
-     * Id of Bible whose Chapters to fetch
-     * @type string
-     * @memberof ChaptersApigetAudioChapters
-     */
-    audioBibleId: string
-    /**
-     * Id of the Book whose Chapters to fetch
-     * @type string
-     * @memberof ChaptersApigetAudioChapters
-     */
-    bookId: string
-}
-
 export interface ChaptersApiGetChapterRequest {
     /**
-     * Id of Bible whose Chapter to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof ChaptersApigetChapter
      */
     bibleId: string
     /**
-     * Id of the Chapter to fetch
+     * The Chapter ID you are looking to fetch
      * @type string
      * @memberof ChaptersApigetChapter
      */
     chapterId: string
     /**
-     * Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
+     * Determines the structure of returned verse content
      * @type &#39;html&#39; | &#39;json&#39; | &#39;text&#39;
      * @memberof ChaptersApigetChapter
      */
     contentType?: 'html' | 'json' | 'text'
     /**
-     * Include footnotes in content
+     * When &#x60;true&#x60;, returns footnotes in verse content
      * @type boolean
      * @memberof ChaptersApigetChapter
      */
     includeNotes?: boolean
     /**
-     * Include section titles in content
+     * When &#x60;true&#x60;, returns section titles in verse content
      * @type boolean
      * @memberof ChaptersApigetChapter
      */
     includeTitles?: boolean
     /**
-     * Include chapter numbers in content
+     * When &#x60;true&#x60;, returns chapter numbers in verse content
      * @type boolean
      * @memberof ChaptersApigetChapter
      */
     includeChapterNumbers?: boolean
     /**
-     * Include verse numbers in content.
+     * When &#x60;true&#x60;, returns verse numbers in verse content
      * @type boolean
      * @memberof ChaptersApigetChapter
      */
     includeVerseNumbers?: boolean
     /**
-     * Include spans that wrap verse numbers and verse text for bible content.
+     * When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
      * @type boolean
      * @memberof ChaptersApigetChapter
      */
     includeVerseSpans?: boolean
     /**
-     * Comma delimited list of bibleIds to include
+     * Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      * @type string
      * @memberof ChaptersApigetChapter
      */
@@ -392,13 +434,13 @@ export interface ChaptersApiGetChapterRequest {
 
 export interface ChaptersApiGetChaptersRequest {
     /**
-     * Id of Bible whose Chapters to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof ChaptersApigetChapters
      */
     bibleId: string
     /**
-     * Id of the Book whose Chapters to fetch
+     * The Book ID you are looking to fetch
      * @type string
      * @memberof ChaptersApigetChapters
      */
@@ -413,23 +455,8 @@ export class ObjectChaptersApi {
     }
 
     /**
-     * Gets a single `Chapter` object for a given `audioBibleId` and `chapterId`. This AudioChapter object also includes an `resourceUrl` property with a HTTP URL to the mp3 audio resource for the chapter.  The `resourceUrl` is unique per request and expires in XX minutes.  The `expiresAt` property provides the Unix time value of `resourceUrl` expiration. 
-     * @param param the request object
-     */
-    public getAudioChapter(param: ChaptersApiGetAudioChapterRequest, options?: Configuration): Promise<GetAudioChapter200Response> {
-        return this.api.getAudioChapter(param.audioBibleId, param.chapterId,  options).toPromise();
-    }
-
-    /**
-     * Gets an array of `Chapter` objects for a given `audioBibleId` and `bookId` 
-     * @param param the request object
-     */
-    public getAudioChapters(param: ChaptersApiGetAudioChaptersRequest, options?: Configuration): Promise<GetChapters200Response> {
-        return this.api.getAudioChapters(param.audioBibleId, param.bookId,  options).toPromise();
-    }
-
-    /**
-     * Gets a single `Chapter` object for a given `bibleId` and `chapterId`. This Chapter object also includes an `content` property with all verses for the Chapter. 
+     * Gets a single `Chapter` object for a given `bibleId` and `chapterId`.  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  In addition to information about the given chapter, this endpoint will also return all verse content included in that chapter within the `content` field.
+     * Get a Chapter
      * @param param the request object
      */
     public getChapter(param: ChaptersApiGetChapterRequest, options?: Configuration): Promise<GetChapter200Response> {
@@ -437,7 +464,8 @@ export class ObjectChaptersApi {
     }
 
     /**
-     * Gets an array of `Chapter` objects for a given `bibleId` and `bookId` 
+     * Lists `Chapter` objects for a given `bibleId` and `bookId`  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](#/components/schemas/Book) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  *Note: This endpoint does not return verse content*
+     * List Chapters in a Book
      * @param param the request object
      */
     public getChapters(param: ChaptersApiGetChaptersRequest, options?: Configuration): Promise<GetChapters200Response> {
@@ -451,61 +479,61 @@ import { PassagesApiRequestFactory, PassagesApiResponseProcessor} from "../apis/
 
 export interface PassagesApiGetPassageRequest {
     /**
-     * Id of Bible for passage
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof PassagesApigetPassage
      */
     bibleId: string
     /**
-     * String reference id for the requested passage.
+     * The Passage ID you are looking to fetch
      * @type string
      * @memberof PassagesApigetPassage
      */
     passageId: string
     /**
-     * Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
+     * Determines the structure of returned verse content
      * @type &#39;html&#39; | &#39;json&#39; | &#39;text&#39;
      * @memberof PassagesApigetPassage
      */
     contentType?: 'html' | 'json' | 'text'
     /**
-     * Include footnotes in content
+     * When &#x60;true&#x60;, returns footnotes in verse content
      * @type boolean
      * @memberof PassagesApigetPassage
      */
     includeNotes?: boolean
     /**
-     * Include section titles in content
+     * When &#x60;true&#x60;, returns section titles in verse content
      * @type boolean
      * @memberof PassagesApigetPassage
      */
     includeTitles?: boolean
     /**
-     * Include chapter numbers in content
+     * When &#x60;true&#x60;, returns chapter numbers in verse content
      * @type boolean
      * @memberof PassagesApigetPassage
      */
     includeChapterNumbers?: boolean
     /**
-     * Include verse numbers in content.
+     * When &#x60;true&#x60;, returns verse numbers in verse content
      * @type boolean
      * @memberof PassagesApigetPassage
      */
     includeVerseNumbers?: boolean
     /**
-     * Include spans that wrap verse numbers and verse text for bible content.
+     * When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
      * @type boolean
      * @memberof PassagesApigetPassage
      */
     includeVerseSpans?: boolean
     /**
-     * Comma delimited list of bibleIds to include
+     * Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      * @type string
      * @memberof PassagesApigetPassage
      */
     parallels?: string
     /**
-     * Use the supplied id(s) to match the verseOrgId instead of the verseId
+     * When &#x60;true&#x60;, uses the supplied id(s) to match the &#x60;verseOrgId&#x60; instead of the &#x60;verseId&#x60;
      * @type boolean
      * @memberof PassagesApigetPassage
      */
@@ -520,7 +548,8 @@ export class ObjectPassagesApi {
     }
 
     /**
-     * Gets a `Passage` object for a given `bibleId` and `passageId`. This Passage object also includes an `content` property with all verses corresponding to the passageId. The `passageId` parameter can represent a chapter, verse, or range of verses. 
+     * Gets a `Passage` object for a given `bibleId` and `passageId`.  A `Passage` object represents an arbitrary range of verses from the Bible. These ranges are not predefined values, but instead depend on the given input, known as a **Passage ID**. A **Passsage ID** consists of two [Verse](https://docs.api.bible/guides/verses) IDs separated by a `-`. These **Verse IDs** can span chapters and books, though passages are limited to 200 verses. A few passage examples are:  | Verse Range                             | Passage ID          | | --------------------------------------- | ------------------- | | Genesis 1:1 - Genesis 2:3               | `GEN.1.1-GEN.2.3`   | | John 3:1 - John 3:16                    | `JHN.3:1-JHN.3.16`  | | 1 Corinthians 16:1 - 2 Corinthians 1:23 | `1CO.16.1-2CO.1.23` |  In addition to information about the given passage, this endpoint will also return all verse content included in that passage within the `content` field. 
+     * Get a Passage
      * @param param the request object
      */
     public getPassage(param: PassagesApiGetPassageRequest, options?: Configuration): Promise<GetPassage200Response> {
@@ -534,37 +563,37 @@ import { SearchApiRequestFactory, SearchApiResponseProcessor} from "../apis/Sear
 
 export interface SearchApiSearchBibleRequest {
     /**
-     * Id of Bible to search
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof SearchApisearchBible
      */
     bibleId: string
     /**
-     * Search keywords or passage reference.  Supported wildcards are * and ?.   The * wildcard matches any character sequence (e.g. searching for \&quot;wo*d\&quot; finds text such as \&quot;word\&quot;, \&quot;world\&quot;, and \&quot;worshipped\&quot;).   The ? wildcard matches any matches any single character (e.g. searching for \&quot;l?ve\&quot; finds text such as \&quot;live\&quot; and \&quot;love\&quot;). 
+     * Comma-separated search keywords or a passage reference. Supported wildcards are &#x60;*&#x60; and &#x60;?&#x60;. The &#x60;*&#x60; wildcard matches any character sequence (e.g. searching for \&quot;wo*d\&quot; finds text such as \&quot;word\&quot;, \&quot;world\&quot;, and \&quot;worshipped\&quot;). The &#x60;?&#x60; wildcard matches any matches any single character (e.g. searching for \&quot;l?ve\&quot; finds text such as \&quot;live\&quot; and \&quot;love\&quot;).
      * @type string
      * @memberof SearchApisearchBible
      */
     query?: string
     /**
-     * Integer limit for how many matching results to return. Default is 10.
+     * Limits the number of search results returned. Used with the &#x60;offset&#x60; parameter to paginate results.
      * @type number
      * @memberof SearchApisearchBible
      */
     limit?: number
     /**
-     * Offset for search results. Used to paginate results
+     * Offsets results by the given amount. Used with the &#x60;limit&#x60; parameter to paginate results.
      * @type number
      * @memberof SearchApisearchBible
      */
     offset?: number
     /**
-     * Sort order of results.  Supported values are &#x60;relevance&#x60; (default), &#x60;canonical&#x60; and &#x60;reverse-canonical&#x60;
+     * Sorts search results
      * @type &#39;relevance&#39; | &#39;canonical&#39; | &#39;reverse-canonical&#39;
      * @memberof SearchApisearchBible
      */
     sort?: 'relevance' | 'canonical' | 'reverse-canonical'
     /**
-     * One or more, comma seperated, passage ids (book, chapter, verse) which the search will be limited to.  (i.e. gen.1,gen.5 or gen-num or gen.1.1-gen.3.5) 
+     * Comma-separated list of Passage IDs which the search will be limited to. 
      * @type string
      * @memberof SearchApisearchBible
      */
@@ -585,7 +614,8 @@ export class ObjectSearchApi {
     }
 
     /**
-     * Gets search results for a given `bibleId` and query string.  Searches will match all verses with the list of keywords provided in the query string. Order of the keywords does not matter. However all keywords must be present in a verse for it to be considered a match. The total number of results returned from a search can be limited by populating the `limit` attribute in the query string with a non-negative integer value.  If no limit value is provide a default of 10 is used. `offset` can be used to traverse paginated results.  So for example if you are using the default `limit` of 10, using an `offset` of 10 will return the second page of results, namely results 11-20. The `text` property of each verse object contains only the verse text.  It does not contain footnote references. However, those can be queried directly using the `/bibles/{bibleId}/verses/{verseId}` endpoint. 
+     * A search will attempt to match all verses with the list of keywords provided in the query string. The order of the keywords does not matter, however _all listed keywords must be present in a verse for it to be considered a match_.  Wildcard searches are supported, and can be used to match partial results:  | Wildcard | Description                    | Example                                                      | | -------- | ------------------------------ | ------------------------------------------------------------ | | `*`      | Matches any character sequence | \"wo\\*d\" finds text such as \"word\", \"world\", and \"worshipped\" | | `?`      | Matches any single character   | \"l?ve\" finds text such as \"live\" and \"love\"                  |  The `text` property of each search result contains only the verse text, it does not contain footnote references or additional formatting. However, more information on a verse can be queried directly by [fetching a single verse](https://docs.api.bible/guides/verses#fetching-a-single-verse). 
+     * Search a Bible
      * @param param the request object
      */
     public searchBible(param: SearchApiSearchBibleRequest, options?: Configuration): Promise<SearchBible200Response> {
@@ -599,13 +629,13 @@ import { SectionsApiRequestFactory, SectionsApiResponseProcessor} from "../apis/
 
 export interface SectionsApiGetBookSectionsRequest {
     /**
-     * Id of Bible whose Sections to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof SectionsApigetBookSections
      */
     bibleId: string
     /**
-     * Id of the Book whose Sections to fetch
+     * The Book ID you are looking to fetch
      * @type string
      * @memberof SectionsApigetBookSections
      */
@@ -614,13 +644,13 @@ export interface SectionsApiGetBookSectionsRequest {
 
 export interface SectionsApiGetChapterSectionsRequest {
     /**
-     * Id of Bible whose Sections to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof SectionsApigetChapterSections
      */
     bibleId: string
     /**
-     * Id of the Chapter whose Sections to fetch
+     * The Chapter ID you are looking to fetch
      * @type string
      * @memberof SectionsApigetChapterSections
      */
@@ -629,55 +659,55 @@ export interface SectionsApiGetChapterSectionsRequest {
 
 export interface SectionsApiGetSectionRequest {
     /**
-     * Id of Bible whose Section to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof SectionsApigetSection
      */
     bibleId: string
     /**
-     * Id of the Section to fetch
+     * The Section ID you are looking to fetch
      * @type string
      * @memberof SectionsApigetSection
      */
     sectionId: string
     /**
-     * Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
+     * Determines the structure of returned verse content
      * @type &#39;html&#39; | &#39;json&#39; | &#39;text&#39;
      * @memberof SectionsApigetSection
      */
     contentType?: 'html' | 'json' | 'text'
     /**
-     * Include footnotes in content
+     * When &#x60;true&#x60;, returns footnotes in verse content
      * @type boolean
      * @memberof SectionsApigetSection
      */
     includeNotes?: boolean
     /**
-     * Include section titles in content
+     * When &#x60;true&#x60;, returns section titles in verse content
      * @type boolean
      * @memberof SectionsApigetSection
      */
     includeTitles?: boolean
     /**
-     * Include chapter numbers in content
+     * When &#x60;true&#x60;, returns chapter numbers in verse content
      * @type boolean
      * @memberof SectionsApigetSection
      */
     includeChapterNumbers?: boolean
     /**
-     * Include verse numbers in content.
+     * When &#x60;true&#x60;, returns verse numbers in verse content
      * @type boolean
      * @memberof SectionsApigetSection
      */
     includeVerseNumbers?: boolean
     /**
-     * Include spans that wrap verse numbers and verse text for bible content.
+     * When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
      * @type boolean
      * @memberof SectionsApigetSection
      */
     includeVerseSpans?: boolean
     /**
-     * Comma delimited list of bibleIds to include
+     * Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      * @type string
      * @memberof SectionsApigetSection
      */
@@ -692,7 +722,8 @@ export class ObjectSectionsApi {
     }
 
     /**
-     * Gets an array of `Section` objects for a given `bibleId` and `bookId` 
+     * Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  *Note: This endpoint does not return verse content* 
+     * List Sections in a Book
      * @param param the request object
      */
     public getBookSections(param: SectionsApiGetBookSectionsRequest, options?: Configuration): Promise<GetBookSections200Response> {
@@ -700,7 +731,8 @@ export class ObjectSectionsApi {
     }
 
     /**
-     * Gets an array of `Section` objects for a given `bibleId` and `chapterId` 
+     * Lists `Section` objects for a given `bibleId` and `chapterId`  Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  *Note: This endpoint does not return verse content* 
+     * List Sections in a Chapter
      * @param param the request object
      */
     public getChapterSections(param: SectionsApiGetChapterSectionsRequest, options?: Configuration): Promise<GetBookSections200Response> {
@@ -708,7 +740,8 @@ export class ObjectSectionsApi {
     }
 
     /**
-     * Gets a single `Section` object for a given `bibleId` and `sectionId`. This Section object also includes an `content` property with all verses for the Section. 
+     * Gets a single `Section` object for a given `bibleId` and `sectionId`.   Lists `Section` objects for a given `bibleId` and `bookId`  A `Section` object represents a known range of verses in the Bible, typically tied to a story. Each Section is accessible via its **Section ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a section number. Not every Bible has sections enabled. For Bibles with sections enabled, sections are sequential and _should_ cover nearly every verse if queried in order. A few examples from the book of Genesis are:  | Section Title | Verse Range                | Section ID | | ------------- | -------------------------- | ---------- | | The Beginning | Genesis 1:1 - Genesis 2:3  | `GEN.S1`   | | Adam and Eve  | Genesis 2:4 - Genesis 2:25 | `GEN.S2`   | | The Fall      | Genesis 3:1 - Genesis 3:24 | `GEN.S3`   |  In addition to information about the given section, this endpoint will also return all verse content included in that section within the `content` field. 
+     * Get a Section
      * @param param the request object
      */
     public getSection(param: SectionsApiGetSectionRequest, options?: Configuration): Promise<GetSection200Response> {
@@ -722,61 +755,61 @@ import { VersesApiRequestFactory, VersesApiResponseProcessor} from "../apis/Vers
 
 export interface VersesApiGetVerseRequest {
     /**
-     * Id of Bible for passage
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof VersesApigetVerse
      */
     bibleId: string
     /**
-     * String reference id for the requested verse.
+     * The Verse ID you are looking to fetch
      * @type string
      * @memberof VersesApigetVerse
      */
     verseId: string
     /**
-     * Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
+     * Determines the structure of returned verse content
      * @type &#39;html&#39; | &#39;json&#39; | &#39;text&#39;
      * @memberof VersesApigetVerse
      */
     contentType?: 'html' | 'json' | 'text'
     /**
-     * Include footnotes in content
+     * When &#x60;true&#x60;, returns footnotes in verse content
      * @type boolean
      * @memberof VersesApigetVerse
      */
     includeNotes?: boolean
     /**
-     * Include section titles in content
+     * When &#x60;true&#x60;, returns section titles in verse content
      * @type boolean
      * @memberof VersesApigetVerse
      */
     includeTitles?: boolean
     /**
-     * Include chapter numbers in content
+     * When &#x60;true&#x60;, returns chapter numbers in verse content
      * @type boolean
      * @memberof VersesApigetVerse
      */
     includeChapterNumbers?: boolean
     /**
-     * Include verse numbers in content.
+     * When &#x60;true&#x60;, returns verse numbers in verse content
      * @type boolean
      * @memberof VersesApigetVerse
      */
     includeVerseNumbers?: boolean
     /**
-     * Include spans that wrap verse numbers and verse text for bible content.
+     * When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
      * @type boolean
      * @memberof VersesApigetVerse
      */
     includeVerseSpans?: boolean
     /**
-     * Comma delimited list of bibleIds to include
+     * Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      * @type string
      * @memberof VersesApigetVerse
      */
     parallels?: string
     /**
-     * Use the supplied id(s) to match the verseOrgId instead of the verseId
+     * When &#x60;true&#x60;, uses the supplied id(s) to match the &#x60;verseOrgId&#x60; instead of the &#x60;verseId&#x60;
      * @type boolean
      * @memberof VersesApigetVerse
      */
@@ -785,13 +818,13 @@ export interface VersesApiGetVerseRequest {
 
 export interface VersesApiGetVersesRequest {
     /**
-     * Id of Bible whose Verses to fetch
+     * The ID of the Bible you are looking to fetch
      * @type string
      * @memberof VersesApigetVerses
      */
     bibleId: string
     /**
-     * Id of the Chapter whose Verses to fetch
+     * The Chapter ID you are looking to fetch
      * @type string
      * @memberof VersesApigetVerses
      */
@@ -806,7 +839,8 @@ export class ObjectVersesApi {
     }
 
     /**
-     * Gets a `Verse` object for a given `bibleId` and `verseId`. This Verse object also includes an `content` property with the verse corresponding to the verseId. 
+     * Gets a `Verse` object for a given `bibleId` and `verseId`.  A `Verse` object represents a verse in the Bible. Each Verse is accessible via its **Verse ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID, a chapter number, and a verse number. A few examples are:  | Verse           | Verse ID   | | --------------- | ---------- | | Genesis 1:1     | `GEN.1.1`  | | John 3:16       | `JHN.3.16` | | Revelation 21.4 | `REV.21.4` |  In addition to information about the given verse, this endpoint will also return all verse content within the `content` field. 
+     * Get a Verse
      * @param param the request object
      */
     public getVerse(param: VersesApiGetVerseRequest, options?: Configuration): Promise<GetVerse200Response> {
@@ -814,7 +848,8 @@ export class ObjectVersesApi {
     }
 
     /**
-     * Gets an array of `Verse` objects for a given `bibleId` and `chapterId` 
+     * Lists `Verse` objects for a given `bibleId` and `chapterId`  A `Verse` object represents a verse in the Bible. Each Verse is accessible via its **Verse ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID, a chapter number, and a verse number. A few examples are:  | Verse           | Verse ID   | | --------------- | ---------- | | Genesis 1:1     | `GEN.1.1`  | | John 3:16       | `JHN.3.16` | | Revelation 21.4 | `REV.21.4` |  *Note: This endpoint does not return verse content* 
+     * List Verses in a Chapter
      * @param param the request object
      */
     public getVerses(param: VersesApiGetVersesRequest, options?: Configuration): Promise<GetVerses200Response> {

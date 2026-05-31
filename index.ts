@@ -8,5 +8,5 @@ export * from "./servers.ts";
 export { RequiredError } from "./apis/baseapi.ts";
 
 export type { PromiseMiddleware as Middleware } from './middleware.ts';
-export { PromiseBiblesApi as BiblesApi,  PromiseBooksApi as BooksApi,  PromiseChaptersApi as ChaptersApi,  PromisePassagesApi as PassagesApi,  PromiseSearchApi as SearchApi,  PromiseSectionsApi as SectionsApi,  PromiseVersesApi as VersesApi } from './types/PromiseAPI.ts';
+export { PromiseAudioBiblesApi as AudioBiblesApi,  PromiseBiblesApi as BiblesApi,  PromiseBooksApi as BooksApi,  PromiseChaptersApi as ChaptersApi,  PromisePassagesApi as PassagesApi,  PromiseSearchApi as SearchApi,  PromiseSectionsApi as SectionsApi,  PromiseVersesApi as VersesApi } from './types/PromiseAPI.ts';
 

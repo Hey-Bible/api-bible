@@ -1,15 +1,17 @@
-export * from '../models/AudioBible.ts';
 export * from '../models/AudioBibleSummary.ts';
 export * from '../models/AudioChapter.ts';
+export * from '../models/AudioChapterNext.ts';
+export * from '../models/AudioChapterPrevious.ts';
 export * from '../models/AudioChapterTimecodesInner.ts';
 export * from '../models/Bible.ts';
-export * from '../models/BibleSummary.ts';
-export * from '../models/BibleSummaryCountriesInner.ts';
+export * from '../models/BibleCountriesInner.ts';
 export * from '../models/Book.ts';
 export * from '../models/Chapter.ts';
 export * from '../models/ChapterNext.ts';
+export * from '../models/ChapterPrevious.ts';
 export * from '../models/ChapterSummary.ts';
 export * from '../models/GetAudioBible200Response.ts';
+export * from '../models/GetAudioBibles200Response.ts';
 export * from '../models/GetAudioChapter200Response.ts';
 export * from '../models/GetBible200Response.ts';
 export * from '../models/GetBibles200Response.ts';
@@ -27,26 +29,30 @@ export * from '../models/Meta.ts';
 export * from '../models/Passage.ts';
 export * from '../models/SearchBible200Response.ts';
 export * from '../models/SearchResponse.ts';
-export * from '../models/SearchVerse.ts';
+export * from '../models/SearchResponseVersesInner.ts';
 export * from '../models/Section.ts';
 export * from '../models/SectionNext.ts';
+export * from '../models/SectionPrevious.ts';
 export * from '../models/SectionSummary.ts';
 export * from '../models/Verse.ts';
 export * from '../models/VerseNext.ts';
+export * from '../models/VersePrevious.ts';
 export * from '../models/VerseSummary.ts';
 
-import { AudioBible } from '../models/AudioBible.ts';
 import { AudioBibleSummary } from '../models/AudioBibleSummary.ts';
 import { AudioChapter } from '../models/AudioChapter.ts';
+import { AudioChapterNext } from '../models/AudioChapterNext.ts';
+import { AudioChapterPrevious } from '../models/AudioChapterPrevious.ts';
 import { AudioChapterTimecodesInner } from '../models/AudioChapterTimecodesInner.ts';
-import { Bible } from '../models/Bible.ts';
-import { BibleSummary } from '../models/BibleSummary.ts';
-import { BibleSummaryCountriesInner } from '../models/BibleSummaryCountriesInner.ts';
+import { Bible            , BibleTypeEnum      } from '../models/Bible.ts';
+import { BibleCountriesInner } from '../models/BibleCountriesInner.ts';
 import { Book } from '../models/Book.ts';
 import { Chapter } from '../models/Chapter.ts';
 import { ChapterNext } from '../models/ChapterNext.ts';
+import { ChapterPrevious } from '../models/ChapterPrevious.ts';
 import { ChapterSummary } from '../models/ChapterSummary.ts';
 import { GetAudioBible200Response } from '../models/GetAudioBible200Response.ts';
+import { GetAudioBibles200Response } from '../models/GetAudioBibles200Response.ts';
 import { GetAudioChapter200Response } from '../models/GetAudioChapter200Response.ts';
 import { GetBible200Response } from '../models/GetBible200Response.ts';
 import { GetBibles200Response } from '../models/GetBibles200Response.ts';
@@ -59,17 +65,19 @@ import { GetPassage200Response } from '../models/GetPassage200Response.ts';
 import { GetSection200Response } from '../models/GetSection200Response.ts';
 import { GetVerse200Response } from '../models/GetVerse200Response.ts';
 import { GetVerses200Response } from '../models/GetVerses200Response.ts';
-import { Language } from '../models/Language.ts';
+import { Language    , LanguageScriptDirectionEnum   } from '../models/Language.ts';
 import { Meta } from '../models/Meta.ts';
 import { Passage } from '../models/Passage.ts';
 import { SearchBible200Response } from '../models/SearchBible200Response.ts';
 import { SearchResponse } from '../models/SearchResponse.ts';
-import { SearchVerse } from '../models/SearchVerse.ts';
+import { SearchResponseVersesInner } from '../models/SearchResponseVersesInner.ts';
 import { Section } from '../models/Section.ts';
 import { SectionNext } from '../models/SectionNext.ts';
+import { SectionPrevious } from '../models/SectionPrevious.ts';
 import { SectionSummary } from '../models/SectionSummary.ts';
 import { Verse } from '../models/Verse.ts';
 import { VerseNext } from '../models/VerseNext.ts';
+import { VersePrevious } from '../models/VersePrevious.ts';
 import { VerseSummary } from '../models/VerseSummary.ts';
 
 /* tslint:disable:no-unused-variable */
@@ -92,21 +100,25 @@ const supportedMediaTypes: { [mediaType: string]: number } = {
 
 
 let enumsMap: Set<string> = new Set<string>([
+    "BibleTypeEnum",
+    "LanguageScriptDirectionEnum",
 ]);
 
 let typeMap: {[index: string]: any} = {
-    "AudioBible": AudioBible,
     "AudioBibleSummary": AudioBibleSummary,
     "AudioChapter": AudioChapter,
+    "AudioChapterNext": AudioChapterNext,
+    "AudioChapterPrevious": AudioChapterPrevious,
     "AudioChapterTimecodesInner": AudioChapterTimecodesInner,
     "Bible": Bible,
-    "BibleSummary": BibleSummary,
-    "BibleSummaryCountriesInner": BibleSummaryCountriesInner,
+    "BibleCountriesInner": BibleCountriesInner,
     "Book": Book,
     "Chapter": Chapter,
     "ChapterNext": ChapterNext,
+    "ChapterPrevious": ChapterPrevious,
     "ChapterSummary": ChapterSummary,
     "GetAudioBible200Response": GetAudioBible200Response,
+    "GetAudioBibles200Response": GetAudioBibles200Response,
     "GetAudioChapter200Response": GetAudioChapter200Response,
     "GetBible200Response": GetBible200Response,
     "GetBibles200Response": GetBibles200Response,
@@ -124,12 +136,14 @@ let typeMap: {[index: string]: any} = {
     "Passage": Passage,
     "SearchBible200Response": SearchBible200Response,
     "SearchResponse": SearchResponse,
-    "SearchVerse": SearchVerse,
+    "SearchResponseVersesInner": SearchResponseVersesInner,
     "Section": Section,
     "SectionNext": SectionNext,
+    "SectionPrevious": SectionPrevious,
     "SectionSummary": SectionSummary,
     "Verse": Verse,
     "VerseNext": VerseNext,
+    "VersePrevious": VersePrevious,
     "VerseSummary": VerseSummary,
 }
 

@@ -8,7 +8,6 @@ import {canConsumeForm, isCodeInRange} from '../util.ts';
 import {SecurityAuthentication} from '../auth/auth.ts';
 
 
-import { GetAudioChapter200Response } from '../models/GetAudioChapter200Response.ts';
 import { GetChapter200Response } from '../models/GetChapter200Response.ts';
 import { GetChapters200Response } from '../models/GetChapters200Response.ts';
 
@@ -18,106 +17,17 @@ import { GetChapters200Response } from '../models/GetChapters200Response.ts';
 export class ChaptersApiRequestFactory extends BaseAPIRequestFactory {
 
     /**
-     * Gets a single `Chapter` object for a given `audioBibleId` and `chapterId`. This AudioChapter object also includes an `resourceUrl` property with a HTTP URL to the mp3 audio resource for the chapter.  The `resourceUrl` is unique per request and expires in XX minutes.  The `expiresAt` property provides the Unix time value of `resourceUrl` expiration. 
-     * @param audioBibleId Id of Bible whose Chapter to fetch
-     * @param chapterId Id of the Chapter to fetch
-     */
-    public async getAudioChapter(audioBibleId: string, chapterId: string, _options?: Configuration): Promise<RequestContext> {
-        let _config = _options || this.configuration;
-
-        // verify required parameter 'audioBibleId' is not null or undefined
-        if (audioBibleId === null || audioBibleId === undefined) {
-            throw new RequiredError("ChaptersApi", "getAudioChapter", "audioBibleId");
-        }
-
-
-        // verify required parameter 'chapterId' is not null or undefined
-        if (chapterId === null || chapterId === undefined) {
-            throw new RequiredError("ChaptersApi", "getAudioChapter", "chapterId");
-        }
-
-
-        // Path Params
-        const localVarPath = '/v1/audio-bibles/{audioBibleId}/chapters/{chapterId}'
-            .replace('{' + 'audioBibleId' + '}', encodeURIComponent(String(audioBibleId)))
-            .replace('{' + 'chapterId' + '}', encodeURIComponent(String(chapterId)));
-
-        // Make Request Context
-        const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
-        requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
-
-
-        let authMethod: SecurityAuthentication | undefined;
-        // Apply auth methods
-        authMethod = _config.authMethods["ApiKeyAuth"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
-        
-        const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
-        if (defaultAuth?.applySecurityAuthentication) {
-            await defaultAuth?.applySecurityAuthentication(requestContext);
-        }
-
-        return requestContext;
-    }
-
-    /**
-     * Gets an array of `Chapter` objects for a given `audioBibleId` and `bookId` 
-     * @param audioBibleId Id of Bible whose Chapters to fetch
-     * @param bookId Id of the Book whose Chapters to fetch
-     */
-    public async getAudioChapters(audioBibleId: string, bookId: string, _options?: Configuration): Promise<RequestContext> {
-        let _config = _options || this.configuration;
-
-        // verify required parameter 'audioBibleId' is not null or undefined
-        if (audioBibleId === null || audioBibleId === undefined) {
-            throw new RequiredError("ChaptersApi", "getAudioChapters", "audioBibleId");
-        }
-
-
-        // verify required parameter 'bookId' is not null or undefined
-        if (bookId === null || bookId === undefined) {
-            throw new RequiredError("ChaptersApi", "getAudioChapters", "bookId");
-        }
-
-
-        // Path Params
-        const localVarPath = '/v1/audio-bibles/{audioBibleId}/books/{bookId}/chapters'
-            .replace('{' + 'audioBibleId' + '}', encodeURIComponent(String(audioBibleId)))
-            .replace('{' + 'bookId' + '}', encodeURIComponent(String(bookId)));
-
-        // Make Request Context
-        const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
-        requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
-
-
-        let authMethod: SecurityAuthentication | undefined;
-        // Apply auth methods
-        authMethod = _config.authMethods["ApiKeyAuth"]
-        if (authMethod?.applySecurityAuthentication) {
-            await authMethod?.applySecurityAuthentication(requestContext);
-        }
-        
-        const defaultAuth: SecurityAuthentication | undefined = _options?.authMethods?.default || this.configuration?.authMethods?.default
-        if (defaultAuth?.applySecurityAuthentication) {
-            await defaultAuth?.applySecurityAuthentication(requestContext);
-        }
-
-        return requestContext;
-    }
-
-    /**
-     * Gets a single `Chapter` object for a given `bibleId` and `chapterId`. This Chapter object also includes an `content` property with all verses for the Chapter. 
-     * @param bibleId Id of Bible whose Chapter to fetch
-     * @param chapterId Id of the Chapter to fetch
-     * @param contentType Content type to be returned in the content property.  Supported values are &#x60;html&#x60; (default), &#x60;json&#x60; (beta), and &#x60;text&#x60; (beta)
-     * @param includeNotes Include footnotes in content
-     * @param includeTitles Include section titles in content
-     * @param includeChapterNumbers Include chapter numbers in content
-     * @param includeVerseNumbers Include verse numbers in content.
-     * @param includeVerseSpans Include spans that wrap verse numbers and verse text for bible content.
-     * @param parallels Comma delimited list of bibleIds to include
+     * Gets a single `Chapter` object for a given `bibleId` and `chapterId`.  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](https://docs.api.bible/guides/books) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  In addition to information about the given chapter, this endpoint will also return all verse content included in that chapter within the `content` field.
+     * Get a Chapter
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param chapterId The Chapter ID you are looking to fetch
+     * @param contentType Determines the structure of returned verse content
+     * @param includeNotes When &#x60;true&#x60;, returns footnotes in verse content
+     * @param includeTitles When &#x60;true&#x60;, returns section titles in verse content
+     * @param includeChapterNumbers When &#x60;true&#x60;, returns chapter numbers in verse content
+     * @param includeVerseNumbers When &#x60;true&#x60;, returns verse numbers in verse content
+     * @param includeVerseSpans When &#x60;true&#x60;, returns spans that wrap verse numbers and verse text in content
+     * @param parallels Comma-separated list of Bible IDs. When included, returns parallel verses from the given Bibles
      */
     public async getChapter(bibleId: string, chapterId: string, contentType?: 'html' | 'json' | 'text', includeNotes?: boolean, includeTitles?: boolean, includeChapterNumbers?: boolean, includeVerseNumbers?: boolean, includeVerseSpans?: boolean, parallels?: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -142,7 +52,7 @@ export class ChaptersApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/chapters/{chapterId}'
+        const localVarPath = '/bibles/{bibleId}/chapters/{chapterId}'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'chapterId' + '}', encodeURIComponent(String(chapterId)));
 
@@ -202,9 +112,10 @@ export class ChaptersApiRequestFactory extends BaseAPIRequestFactory {
     }
 
     /**
-     * Gets an array of `Chapter` objects for a given `bibleId` and `bookId` 
-     * @param bibleId Id of Bible whose Chapters to fetch
-     * @param bookId Id of the Book whose Chapters to fetch
+     * Lists `Chapter` objects for a given `bibleId` and `bookId`  A `Chapter` object represents a single chapter of the Bible. Each Chapter is accessible via its **Chapter ID**, a string consisting of a [Book](#/components/schemas/Book) ID and a chapter number. A few examples are:  | Chapter       | Chapter ID | | ------------- | ---------- | | Genesis 1     | `GEN.1`    | | John 3        | `JHN.3`    | | Revelation 22 | `REV.22`   |  *Note: This endpoint does not return verse content*
+     * List Chapters in a Book
+     * @param bibleId The ID of the Bible you are looking to fetch
+     * @param bookId The Book ID you are looking to fetch
      */
     public async getChapters(bibleId: string, bookId: string, _options?: Configuration): Promise<RequestContext> {
         let _config = _options || this.configuration;
@@ -222,7 +133,7 @@ export class ChaptersApiRequestFactory extends BaseAPIRequestFactory {
 
 
         // Path Params
-        const localVarPath = '/v1/bibles/{bibleId}/books/{bookId}/chapters'
+        const localVarPath = '/bibles/{bibleId}/books/{bookId}/chapters'
             .replace('{' + 'bibleId' + '}', encodeURIComponent(String(bibleId)))
             .replace('{' + 'bookId' + '}', encodeURIComponent(String(bookId)));
 
@@ -254,88 +165,6 @@ export class ChaptersApiResponseProcessor {
      * Unwraps the actual response sent by the server from the response context and deserializes the response content
      * to the expected objects
      *
-     * @params response Response returned by the server for a request to getAudioChapter
-     * @throws ApiException if the response code was not in [200, 299]
-     */
-     public async getAudioChapter(response: ResponseContext): Promise<GetAudioChapter200Response > {
-        const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
-        if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: GetAudioChapter200Response = ObjectSerializer.deserialize(
-                ObjectSerializer.parse(await response.body.text(), contentType),
-                "GetAudioChapter200Response", ""
-            ) as GetAudioChapter200Response;
-            return body;
-        }
-        if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
-        }
-        if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
-        }
-        if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Chapters for this Bible", undefined, response.headers);
-        }
-        if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Chapter not found", undefined, response.headers);
-        }
-
-        // Work around for missing responses in specification, e.g. for petstore.yaml
-        if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: GetAudioChapter200Response = ObjectSerializer.deserialize(
-                ObjectSerializer.parse(await response.body.text(), contentType),
-                "GetAudioChapter200Response", ""
-            ) as GetAudioChapter200Response;
-            return body;
-        }
-
-        throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
-    }
-
-    /**
-     * Unwraps the actual response sent by the server from the response context and deserializes the response content
-     * to the expected objects
-     *
-     * @params response Response returned by the server for a request to getAudioChapters
-     * @throws ApiException if the response code was not in [200, 299]
-     */
-     public async getAudioChapters(response: ResponseContext): Promise<GetChapters200Response > {
-        const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
-        if (isCodeInRange("200", response.httpStatusCode)) {
-            const body: GetChapters200Response = ObjectSerializer.deserialize(
-                ObjectSerializer.parse(await response.body.text(), contentType),
-                "GetChapters200Response", ""
-            ) as GetChapters200Response;
-            return body;
-        }
-        if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
-        }
-        if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
-        }
-        if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Chapters for this Bible", undefined, response.headers);
-        }
-        if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Book not found", undefined, response.headers);
-        }
-
-        // Work around for missing responses in specification, e.g. for petstore.yaml
-        if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
-            const body: GetChapters200Response = ObjectSerializer.deserialize(
-                ObjectSerializer.parse(await response.body.text(), contentType),
-                "GetChapters200Response", ""
-            ) as GetChapters200Response;
-            return body;
-        }
-
-        throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
-    }
-
-    /**
-     * Unwraps the actual response sent by the server from the response context and deserializes the response content
-     * to the expected objects
-     *
      * @params response Response returned by the server for a request to getChapter
      * @throws ApiException if the response code was not in [200, 299]
      */
@@ -349,16 +178,16 @@ export class ChaptersApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Chapters for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Chapter not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a chapter with the given &#x60;{chapterId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
@@ -390,16 +219,16 @@ export class ChaptersApiResponseProcessor {
             return body;
         }
         if (isCodeInRange("400", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Invalid ID supplied", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Bad Request     Invalid Bible ID supplied", undefined, response.headers);
         }
         if (isCodeInRange("401", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Unauthorized for API access.  Missing or Invalid API Token provided.", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Unauthorized    Missing or Invalid API Token provided.", undefined, response.headers);
         }
         if (isCodeInRange("403", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Not authorized to retrieve Chapters for this Bible", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Forbidden    Not authorized to access this Bible", undefined, response.headers);
         }
         if (isCodeInRange("404", response.httpStatusCode)) {
-            throw new ApiException<undefined>(response.httpStatusCode, "Book not found", undefined, response.headers);
+            throw new ApiException<undefined>(response.httpStatusCode, "#### Not Found    Unable to find a book with the given &#x60;{bookId}&#x60;", undefined, response.headers);
         }
 
         // Work around for missing responses in specification, e.g. for petstore.yaml
